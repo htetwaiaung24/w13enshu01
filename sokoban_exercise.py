@@ -111,14 +111,10 @@ def next_position(origin, vector):
 
 
 def can_enter(board, destination):
-    """TODO 2：壁判定。引数：board, 移動先座標。戻り値：移動可ならTrue。
-
-    まず TODO 1 では呼ばなくてもよい。
-    TODO 2 では、盤面内か、壁に含まれるかを確認しよう。
-    デモ版では walls という名前だが、演習版では solid に入っている。
-    """
-    # TODO 2: 条件を実装する（現状では壁も通過できる）
-    return in_field(board, destination)
+    return (
+        in_field(board, destination)
+        and destination not in board["solid"]
+    )
 
 
 def push_crate(board, crate_position, vector):
@@ -139,7 +135,7 @@ def apply_move(board, direction_key):
     vector = KEY_TO_VECTOR[direction_key]
     destination = next_position(board["hero"], vector)
 
-    if not in_field(board, destination):
+    if not can_enter(board, destination):
         return False
 
     board["past"].append(
@@ -150,7 +146,6 @@ def apply_move(board, direction_key):
     board["steps"] += 1
 
     return True
-
 
 def step_back(board):
     """Undoを実行。引数：board。戻り値：なし。"""
